@@ -226,20 +226,25 @@ const counted = rs => rs.filter(r=>r.telt!==false);
 const fmtGrade = g => Number(g).toFixed(1).replace(".",",");
 
 const results = [...RESULTS].sort((a,b)=>b.datum.localeCompare(a.datum));
+// Only grades from the last 7 days go into packs; older ones are already in the collection
+const NEW_DAYS = 7;
+const isoLocal = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+const since = (() => { const d=new Date(); d.setDate(d.getDate()-NEW_DAYS); return isoLocal(d); })();
+const fresh = results.filter(r=>r.datum>=since);
 let opened = 0;
 const stage = document.getElementById("stage");
 const sleep = ms => new Promise(r=>setTimeout(r,ms));
 
 function updateCount(){
-  const left = Math.max(0, Math.ceil((results.length-opened)/PACK_SIZE));
+  const left = Math.max(0, Math.ceil((fresh.length-opened)/PACK_SIZE));
   document.getElementById("count").textContent = `${left} pack${left===1?"":"s"} over`;
 }
 
 function showPack(){
   updateCount();
   document.getElementById("rays").classList.remove("on");
-  if(opened>=results.length){ return showEnd(); }
-  const n = Math.min(PACK_SIZE, results.length-opened);
+  if(opened>=fresh.length){ return showEnd(); }
+  const n = Math.min(PACK_SIZE, fresh.length-opened);
   stage.innerHTML = `
     <div class="pack-wrap" id="pw">
       <div class="pack"><div class="top"></div>
@@ -252,7 +257,7 @@ function showPack(){
 
 async function openPack(e){
   const pw = e.currentTarget;
-  const batch = results.slice(opened, opened+PACK_SIZE);
+  const batch = fresh.slice(opened, opened+PACK_SIZE);
   opened += batch.length;
   const best = batch.reduce((a,b)=>b.cijfer>a.cijfer?b:a);
   const bt = tier(best.cijfer);
@@ -345,7 +350,7 @@ async function revealCards(batch){
     document.getElementById("sum").innerHTML=`Pack rating: <b>${Math.round(avg*10)}</b> &nbsp;·&nbsp; gemiddeld <b>${fmtGrade(avg)}</b>`;
     ctl.innerHTML="";
     const b=document.createElement("button");
-    b.textContent = opened<results.length ? "Volgende pack" : "Bekijk collectie";
+    b.textContent = opened<fresh.length ? "Volgende pack" : "Bekijk collectie";
     b.onclick=showPack; ctl.appendChild(b);
   }
   updateCount();
@@ -381,9 +386,10 @@ function overviewHTML(){
 function showEnd(){
   document.getElementById("rays").classList.add("on");
   updateCount();
-  stage.innerHTML=`${overviewHTML()}
+  const note = fresh.length ? "" : `<div class="summary" style="margin:0 0 18px">Geen nieuwe cijfers in de afgelopen ${NEW_DAYS} dagen</div>`;
+  stage.innerHTML=`${note}${overviewHTML()}
     <div class="summary" style="font-size:26px;margin:28px 0 16px">Jouw collectie</div><div class="grid" id="grid"></div>
-    <div class="controls"><button onclick="opened=0;showPack()">Opnieuw openen</button></div>`;
+    ${fresh.length?`<div class="controls"><button onclick="opened=0;showPack()">Opnieuw openen</button></div>`:""}`;
   const grid=document.getElementById("grid");
   [...results].sort((a,b)=>b.cijfer-a.cijfer).forEach(r=>{
     const s=document.createElement("div"); s.className="slot flipped in"; s.innerHTML=cardHTML(r); grid.appendChild(s);
