@@ -94,7 +94,13 @@ h1 span{color:var(--accent)}
 .rating .r{font-size:46px;font-weight:800}
 .rating .pos{font-size:18px;font-weight:700}
 .rating .em{font-size:22px;margin-top:4px}
-.big-emoji{flex:1;font-size:70px;text-align:center;line-height:1.2;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.avatar{flex:1;display:flex;justify-content:center;margin-top:-6px}
+.avatar svg{width:104px;height:104px;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.pack-avatar{width:130px;height:130px;border-radius:50%;background:radial-gradient(circle,#2c55b8,#0a1a46 70%);box-shadow:0 0 0 3px var(--gold),0 0 30px rgba(246,211,107,.5);overflow:hidden;margin-bottom:12px}
+.pack-avatar svg{width:100%;height:100%;display:block}
+.wo-avatar{width:150px;height:150px;border-radius:50%;overflow:hidden;background:radial-gradient(circle,#2c55b8,#0a1a46 70%);box-shadow:0 0 0 4px var(--gold),0 0 50px rgba(0,229,255,.5);animation:pop .6s cubic-bezier(.2,1.4,.4,1)}
+.wo-avatar svg{width:100%;height:100%;display:block}
+@keyframes pop{from{transform:scale(0)}to{transform:scale(1)}}
 .nm{font-size:19px;font-weight:800;text-transform:uppercase;text-align:center;line-height:1;margin-top:4px;
   border-bottom:1px solid currentColor;padding-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:24px}
 .stats{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;margin-top:8px;font-size:16px}
@@ -113,7 +119,7 @@ button:active{transform:scale(.96)}
 @media (max-width:480px){
   .slot{width:150px;height:214px}
   .front{padding:16px 11px 20px}
-  .rating .r{font-size:34px}.rating .pos{font-size:14px}.big-emoji{font-size:48px}
+  .rating .r{font-size:34px}.rating .pos{font-size:14px}.avatar svg{width:76px;height:76px}
   .nm{font-size:15px}.stats{font-size:13px}
 }
 </style>
@@ -135,6 +141,28 @@ const RESULTS = [
   {vak:"WI",   naam:"Wiskunde proefwerk",  cijfer:8.6,  weging:3, datum:"2026-09-22"},
 ];
 const PACK_SIZE = 3;
+// Cartoon footballer avatar (blond side-swept hair, braces)
+const AVATAR = `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+  <path d="M6 120 Q10 92 40 85 L80 85 Q110 92 114 120 Z" fill="#1e3f8f"/>
+  <path d="M6 120 Q10 92 40 85 L44 85 L30 120 Z M114 120 Q110 92 80 85 L76 85 L90 120 Z" fill="#16306e"/>
+  <path d="M46 85 L60 100 L74 85 Z" fill="#f6d36b"/>
+  <path d="M49 85 L60 96 L71 85 Z" fill="#e9b98f"/>
+  <text x="60" y="117" text-anchor="middle" font-family="Barlow Condensed,Arial Narrow,sans-serif" font-weight="800" font-size="20" fill="#f6d36b">10</text>
+  <rect x="50" y="70" width="20" height="18" rx="6" fill="#e9b98f"/>
+  <circle cx="36" cy="56" r="5.5" fill="#f3c9a8"/><circle cx="84" cy="56" r="5.5" fill="#f3c9a8"/>
+  <ellipse cx="60" cy="52" rx="24" ry="27" fill="#f3c9a8"/>
+  <path d="M34 54 Q28 20 60 18 Q92 17 87 52 Q85 38 78 33 Q70 37 60 36 Q48 40 41 38 Q37 44 34 54 Z" fill="#e3c27c"/>
+  <path d="M41 38 Q55 26 80 30 Q72 22 58 22 Q44 24 41 38 Z" fill="#f0d89a"/>
+  <path d="M44 34 Q58 30 76 34" stroke="#c9a25a" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M45 46 Q50 43 55 46 M65 46 Q70 43 75 46" stroke="#b8925a" stroke-width="2" fill="none" stroke-linecap="round"/>
+  <path d="M46 53 Q50 50 54 53 M66 53 Q70 50 74 53" stroke="#2a2a2a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
+  <path d="M60 55 Q58 61 61 62" stroke="#d9a283" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+  <ellipse cx="45" cy="61" rx="5" ry="3" fill="#f2a28f" opacity=".5"/><ellipse cx="75" cy="61" rx="5" ry="3" fill="#f2a28f" opacity=".5"/>
+  <path d="M46 65 Q60 80 74 65 Z" fill="#fff" stroke="#8a4a3a" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M48 67.5 L72 67.5" stroke="#9aa3ad" stroke-width="1.3"/>
+  <g fill="#7d8792"><rect x="51" y="66.3" width="2.2" height="2.4"/><rect x="56" y="66.3" width="2.2" height="2.4"/><rect x="61.8" y="66.3" width="2.2" height="2.4"/><rect x="66.8" y="66.3" width="2.2" height="2.4"/></g>
+</svg>`;
+
 
 const EMOJI = {WI:"📐",NE:"📖",EN:"🇬🇧",GS:"🏛️",BI:"🧬",AK:"🌍",FA:"🇫🇷",DU:"🇩🇪",NA:"⚛️",SK:"🧪",SCH:"🧪",NASK:"🔬",LO:"⚽",MU:"🎵",BV:"🎨",TE:"🛠️",LA:"🏺",GR:"🏺",IN:"💻",EC:"💶",MAW:"🗳️",LV:"🧭",DR:"🎭",CKV:"🎨",FI:"🤔"};
 const tier = g => g>=8.5?"icon":g>=7.5?"rare":g>=6.5?"gold":g>=5.5?"silver":"bronze";
@@ -163,7 +191,7 @@ function showPack(){
   stage.innerHTML = `
     <div class="pack-wrap" id="pw">
       <div class="pack"><div class="top"></div>
-        <div class="logo">10</div><div class="ptitle">Cijfer Pack</div><div class="psub">${n} toetsen</div>
+        <div class="pack-avatar">${AVATAR}</div><div class="ptitle">Cijfer Pack</div><div class="psub">${n} toetsen</div>
       </div>
     </div>
     <div class="hint">Tik om te openen</div>`;
@@ -198,6 +226,7 @@ async function walkout(r){
   const t = tier(r.cijfer), c = TIER_COLOR[t];
   document.getElementById("rays").classList.add("on");
   stage.innerHTML = `<div class="walkout">
+    <div class="wo-avatar">${AVATAR}</div>
     <div class="wo-label">Vak</div><div class="wo-step" style="color:${c}">${EMOJI[r.vak]||"📚"} ${r.vak}</div>
     <div class="wo-label">Weging</div><div class="wo-step" style="color:${c}">${r.weging}x</div>
     <div class="wo-label">Cijfer</div><div class="wo-step" style="color:${c}">${show(r)}</div>
@@ -219,7 +248,7 @@ function cardHTML(r){
       <div class="badge">${TIER_NAME[t]}</div>
       <div class="top-row">
         <div class="rating"><div class="r">${r.tekst||Math.round(r.cijfer*10)}</div><div class="pos">${r.vak}</div><div class="em">${EMOJI[r.vak]||"📚"}</div></div>
-        <div class="big-emoji">${EMOJI[r.vak]||"📚"}</div>
+        <div class="avatar">${AVATAR}</div>
       </div>
       <div class="nm">${escapeHTML(r.naam)}</div>
       <div class="stats">
