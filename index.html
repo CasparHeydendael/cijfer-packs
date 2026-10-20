@@ -1,0 +1,286 @@
+<!doctype html><html lang="nl"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="theme-color" content="#07101f">
+</head><body>
+<title>Cijfer Packs</title>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#07101f; --bg2:#0d1f3c; --ink:#fff; --muted:#9fb3d1; --accent:#00e5ff; --gold:#f6d36b;
+  color-scheme:dark;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01s!important;animation-iteration-count:1!important}}
+body{
+  background:radial-gradient(ellipse at 50% 30%,var(--bg2),var(--bg) 70%);
+  color:var(--ink);font-family:"Barlow Condensed","Arial Narrow",system-ui,sans-serif;overflow-x:hidden;
+  min-height:100vh;user-select:none;-webkit-user-select:none;
+}
+header{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;max-width:1100px;margin:0 auto}
+h1{font-size:28px;font-weight:800;letter-spacing:1px;text-transform:uppercase}
+h1 span{color:var(--accent)}
+.count{color:var(--muted);font-size:18px}
+#stage{position:relative;min-height:calc(100vh - 70px);display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}
+
+/* ---------- PACK ---------- */
+.pack-wrap{position:relative;cursor:pointer;perspective:1000px}
+.pack{
+  width:220px;height:330px;border-radius:14px;position:relative;
+  background:linear-gradient(135deg,#1b3a8a 0%,#0a1a46 45%,#2a0f5c 100%);
+  box-shadow:0 0 0 3px #f6d36b,0 25px 60px rgba(0,0,0,.6),0 0 60px rgba(0,229,255,.25);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;
+  animation:float 3s ease-in-out infinite;
+}
+.pack::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(115deg,transparent 30%,rgba(255,255,255,.35) 45%,transparent 60%);
+  background-size:250% 100%;animation:shine 2.5s linear infinite}
+.pack .logo{font-size:64px;font-weight:800;color:var(--gold);text-shadow:0 0 20px rgba(246,211,107,.6)}
+.pack .ptitle{font-size:26px;font-weight:800;text-transform:uppercase;letter-spacing:2px}
+.pack .psub{font-size:15px;color:var(--muted);margin-top:4px}
+.pack .top{position:absolute;top:0;left:0;right:0;height:46px;background:linear-gradient(#f6d36b,#c79a2c);
+  clip-path:polygon(0 0,100% 0,100% 80%,95% 100%,90% 80%,85% 100%,80% 80%,75% 100%,70% 80%,65% 100%,60% 80%,55% 100%,50% 80%,45% 100%,40% 80%,35% 100%,30% 80%,25% 100%,20% 80%,15% 100%,10% 80%,5% 100%,0 80%);
+  transition:transform .6s cubic-bezier(.5,-0.5,.7,1.5),opacity .6s}
+.hint{margin-top:26px;font-size:22px;letter-spacing:2px;text-transform:uppercase;color:var(--accent);animation:pulse 1.4s ease-in-out infinite;text-align:center}
+.pack-wrap.shake .pack{animation:shake .08s linear infinite}
+.pack-wrap.open .top{transform:translateY(-120px) rotate(-25deg);opacity:0}
+.pack-wrap.open .pack{animation:none;transform:scale(1.15);transition:transform .4s}
+.pack-wrap.gone{animation:vanish .5s forwards}
+
+@keyframes float{0%,100%{transform:translateY(0) rotateY(-6deg)}50%{transform:translateY(-12px) rotateY(6deg)}}
+@keyframes shine{from{background-position:150% 0}to{background-position:-100% 0}}
+@keyframes pulse{0%,100%{opacity:.5}50%{opacity:1}}
+@keyframes shake{0%{transform:translate(2px,0) rotate(1deg)}25%{transform:translate(-2px,1px) rotate(-1deg)}50%{transform:translate(1px,-2px)}75%{transform:translate(-1px,2px) rotate(1deg)}100%{transform:translate(2px,0)}}
+@keyframes vanish{to{transform:scale(.2);opacity:0}}
+
+/* ---------- WALKOUT ---------- */
+#flash{position:fixed;inset:0;pointer-events:none;opacity:0;z-index:50}
+#flash.go{animation:flash .9s ease-out}
+@keyframes flash{0%{opacity:1}100%{opacity:0}}
+.rays{position:fixed;inset:-50%;pointer-events:none;z-index:0;opacity:0;transition:opacity .6s;
+  background:repeating-conic-gradient(from 0deg,rgba(255,255,255,.07) 0 6deg,transparent 6deg 18deg);animation:spin 18s linear infinite}
+.rays.on{opacity:1}
+@keyframes spin{to{transform:rotate(360deg)}}
+.walkout{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:18px;text-align:center}
+.wo-step{font-size:clamp(40px,10vw,90px);font-weight:800;text-transform:uppercase;opacity:0;transform:scale(2.5);
+  transition:all .5s cubic-bezier(.2,1.4,.4,1);text-shadow:0 0 30px currentColor}
+.wo-step.in{opacity:1;transform:scale(1)}
+.wo-label{font-size:18px;color:var(--muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:-14px;opacity:0;transition:opacity .4s}
+.wo-label.in{opacity:1}
+
+/* ---------- CARDS ---------- */
+.grid{display:flex;flex-wrap:wrap;justify-content:center;gap:18px;max-width:1100px;position:relative;z-index:2}
+.slot{width:190px;height:270px;perspective:900px;opacity:0;transform:translateY(80px) scale(.6);transition:all .5s cubic-bezier(.2,1.3,.4,1)}
+.slot.in{opacity:1;transform:none}
+.card{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform .7s cubic-bezier(.3,1.4,.5,1);cursor:pointer}
+.slot.flipped .card{transform:rotateY(180deg)}
+.face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;
+  clip-path:polygon(50% 0,100% 6%,100% 88%,50% 100%,0 88%,0 6%);}
+.back{background:linear-gradient(135deg,#1b3a8a,#0a1a46 50%,#2a0f5c);display:flex;align-items:center;justify-content:center}
+.back::after{content:"?";font-size:90px;font-weight:800;color:var(--gold);opacity:.8}
+.slot:not(.flipped) .card:hover{transform:translateY(-6px) rotateY(8deg)}
+.front{transform:rotateY(180deg);padding:22px 16px 26px;display:flex;flex-direction:column;color:#2b1d00;overflow:hidden}
+.front::after{content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.45) 50%,transparent 65%);background-size:250% 100%;animation:shine 3s linear infinite}
+.t-bronze{background:linear-gradient(160deg,#e3a26b,#a8622e 60%,#7a4520);color:#2e1607}
+.t-silver{background:linear-gradient(160deg,#f2f4f7,#b6bec9 60%,#8a94a3);color:#1f2530}
+.t-gold{background:linear-gradient(160deg,#fff1b0,#e8c25a 55%,#b88a1e);color:#3a2900}
+.t-rare{background:linear-gradient(160deg,#fff6c9,#f6d36b 40%,#d39a12 70%,#8e5f00);color:#2b1d00}
+.t-icon{background:linear-gradient(160deg,#0b1a3d,#1e3f8f 45%,#0b1a3d);color:#f6d36b}
+.t-icon .stat b,.t-icon .nm{color:#fff}
+.top-row{display:flex;gap:8px;align-items:flex-start}
+.rating{display:flex;flex-direction:column;align-items:center;line-height:.9}
+.rating .r{font-size:46px;font-weight:800}
+.rating .pos{font-size:18px;font-weight:700}
+.rating .em{font-size:22px;margin-top:4px}
+.big-emoji{flex:1;font-size:70px;text-align:center;line-height:1.2;filter:drop-shadow(0 4px 6px rgba(0,0,0,.3))}
+.nm{font-size:19px;font-weight:800;text-transform:uppercase;text-align:center;line-height:1;margin-top:4px;
+  border-bottom:1px solid currentColor;padding-bottom:5px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;min-height:24px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:2px 10px;margin-top:8px;font-size:16px}
+.stat b{font-weight:800;margin-right:4px}
+.badge{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);white-space:nowrap;font-size:11px;font-weight:800;letter-spacing:1px;padding:2px 6px;border-radius:4px;background:rgba(0,0,0,.2)}
+.slot.flipped.glow-icon{filter:drop-shadow(0 0 18px #00e5ff)}
+.slot.flipped.glow-rare{filter:drop-shadow(0 0 14px #f6d36b)}
+
+.controls{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap;justify-content:center;position:relative;z-index:2}
+button{font-family:inherit;font-size:20px;font-weight:800;text-transform:uppercase;letter-spacing:1px;
+  padding:12px 26px;border-radius:999px;border:0;cursor:pointer;background:var(--gold);color:#2b1d00;box-shadow:0 6px 20px rgba(246,211,107,.35)}
+button.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px rgba(255,255,255,.3)}
+button:active{transform:scale(.96)}
+.summary{font-size:22px;color:var(--muted);margin-top:18px;text-align:center;position:relative;z-index:2}
+.summary b{color:var(--gold)}
+@media (max-width:480px){
+  .slot{width:150px;height:214px}
+  .front{padding:16px 11px 20px}
+  .rating .r{font-size:34px}.rating .pos{font-size:14px}.big-emoji{font-size:48px}
+  .nm{font-size:15px}.stats{font-size:13px}
+}
+</style>
+<header><h1>Cijfer <span>Packs</span></h1><div class="count" id="count"></div></header>
+<div class="rays" id="rays"></div>
+<div id="flash"></div>
+<main id="stage"></main>
+
+<script>
+/* ===== Test results — replace with real Somtoday data =====
+   vak: subject abbreviation, naam: test description, cijfer: grade (1-10),
+   weging: weight, datum: YYYY-MM-DD */
+const RESULTS = [
+  {vak:"DU",   naam:"Duits SO",            cijfer:10.0, weging:1, datum:"2026-10-20"},
+  {vak:"NASK", naam:"NaSk praktijk",       cijfer:8.0, tekst:"G", telt:false, weging:1, datum:"2026-10-19"},
+  {vak:"FA",   naam:"Frans SO",            cijfer:6.0,  weging:1, datum:"2026-10-08"},
+  {vak:"EN",   naam:"Engels SO",           cijfer:7.1,  weging:1, datum:"2026-09-29"},
+  {vak:"BI",   naam:"Biologie praktijk",   cijfer:7.3,  weging:1, datum:"2026-09-25"},
+  {vak:"WI",   naam:"Wiskunde proefwerk",  cijfer:8.6,  weging:3, datum:"2026-09-22"},
+];
+const PACK_SIZE = 3;
+
+const EMOJI = {WI:"📐",NE:"📖",EN:"🇬🇧",GS:"🏛️",BI:"🧬",AK:"🌍",FA:"🇫🇷",DU:"🇩🇪",NA:"⚛️",SK:"🧪",SCH:"🧪",NASK:"🔬",LO:"⚽",MU:"🎵",BV:"🎨",TE:"🛠️",LA:"🏺",GR:"🏺",IN:"💻",EC:"💶",MAW:"🗳️",LV:"🧭",DR:"🎭",CKV:"🎨",FI:"🤔"};
+const tier = g => g>=8.5?"icon":g>=7.5?"rare":g>=6.5?"gold":g>=5.5?"silver":"bronze";
+const TIER_NAME = {icon:"ICON",rare:"RARE GOLD",gold:"GOLD",silver:"SILVER",bronze:"BRONZE"};
+const TIER_COLOR = {icon:"#00e5ff",rare:"#f6d36b",gold:"#f6d36b",silver:"#dfe5ee",bronze:"#e3a26b"};
+const fmtDate = d => { const x=new Date(d); return isNaN(x)?d:`${x.getDate()}/${x.getMonth()+1}`; };
+const show = r => r.tekst || fmtGrade(r.cijfer);
+const counted = rs => rs.filter(r=>r.telt!==false);
+const fmtGrade = g => Number(g).toFixed(1).replace(".",",");
+
+const results = [...RESULTS].sort((a,b)=>b.datum.localeCompare(a.datum));
+let opened = 0;
+const stage = document.getElementById("stage");
+const sleep = ms => new Promise(r=>setTimeout(r,ms));
+
+function updateCount(){
+  const left = Math.max(0, Math.ceil((results.length-opened)/PACK_SIZE));
+  document.getElementById("count").textContent = `${left} pack${left===1?"":"s"} over`;
+}
+
+function showPack(){
+  updateCount();
+  document.getElementById("rays").classList.remove("on");
+  if(opened>=results.length){ return showEnd(); }
+  const n = Math.min(PACK_SIZE, results.length-opened);
+  stage.innerHTML = `
+    <div class="pack-wrap" id="pw">
+      <div class="pack"><div class="top"></div>
+        <div class="logo">10</div><div class="ptitle">Cijfer Pack</div><div class="psub">${n} toetsen</div>
+      </div>
+    </div>
+    <div class="hint">Tik om te openen</div>`;
+  document.getElementById("pw").addEventListener("click", openPack, {once:true});
+}
+
+async function openPack(e){
+  const pw = e.currentTarget;
+  const batch = results.slice(opened, opened+PACK_SIZE);
+  opened += batch.length;
+  const best = batch.reduce((a,b)=>b.cijfer>a.cijfer?b:a);
+  const bt = tier(best.cijfer);
+  document.querySelector(".hint").textContent = "...";
+  pw.classList.add("shake");
+  await sleep(1200);
+  pw.classList.remove("shake"); pw.classList.add("open");
+  flash(TIER_COLOR[bt]);
+  await sleep(500);
+  pw.classList.add("gone");
+  await sleep(450);
+  if(bt==="icon"||bt==="rare") await walkout(best);
+  revealCards(batch);
+}
+
+function flash(color){
+  const f=document.getElementById("flash");
+  f.style.background=`radial-gradient(circle,${color},transparent 70%)`;
+  f.classList.remove("go"); void f.offsetWidth; f.classList.add("go");
+}
+
+async function walkout(r){
+  const t = tier(r.cijfer), c = TIER_COLOR[t];
+  document.getElementById("rays").classList.add("on");
+  stage.innerHTML = `<div class="walkout">
+    <div class="wo-label">Vak</div><div class="wo-step" style="color:${c}">${EMOJI[r.vak]||"📚"} ${r.vak}</div>
+    <div class="wo-label">Weging</div><div class="wo-step" style="color:${c}">${r.weging}x</div>
+    <div class="wo-label">Cijfer</div><div class="wo-step" style="color:${c}">${show(r)}</div>
+  </div>`;
+  const steps=[...stage.querySelectorAll(".wo-step")], labels=[...stage.querySelectorAll(".wo-label")];
+  for(let i=0;i<steps.length;i++){
+    await sleep(i===2?1300:700);
+    labels[i].classList.add("in"); steps[i].classList.add("in");
+    if(i===2) flash(c);
+  }
+  await sleep(1500);
+}
+
+function cardHTML(r){
+  const t=tier(r.cijfer);
+  return `<div class="card">
+    <div class="face back"></div>
+    <div class="face front t-${t}">
+      <div class="badge">${TIER_NAME[t]}</div>
+      <div class="top-row">
+        <div class="rating"><div class="r">${r.tekst||Math.round(r.cijfer*10)}</div><div class="pos">${r.vak}</div><div class="em">${EMOJI[r.vak]||"📚"}</div></div>
+        <div class="big-emoji">${EMOJI[r.vak]||"📚"}</div>
+      </div>
+      <div class="nm">${escapeHTML(r.naam)}</div>
+      <div class="stats">
+        <div class="stat"><b>${show(r)}</b>CIJ</div>
+        <div class="stat"><b>${r.weging}x</b>WEG</div>
+        <div class="stat"><b>${fmtDate(r.datum)}</b>DAT</div>
+        <div class="stat"><b>${r.cijfer>=5.5?"✔":"✘"}</b>VOL</div>
+      </div>
+    </div></div>`;
+}
+const escapeHTML = s => String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+
+async function revealCards(batch){
+  document.getElementById("rays").classList.add("on");
+  // weakest first, best card last for suspense
+  const order=[...batch].sort((a,b)=>a.cijfer-b.cijfer);
+  stage.innerHTML = `<div class="grid" id="grid"></div>
+    <div class="summary" id="sum">Tik op de kaarten om ze om te draaien</div>
+    <div class="controls" id="ctl"></div>`;
+  const grid=document.getElementById("grid");
+  const slots=order.map(r=>{
+    const s=document.createElement("div"); s.className="slot"; s.innerHTML=cardHTML(r); grid.appendChild(s);
+    s.addEventListener("click",()=>flip(s,r));
+    return s;
+  });
+  for(const s of slots){ await sleep(160); s.classList.add("in"); }
+  let flippedCount=0;
+  function flip(s,r){
+    if(s.classList.contains("flipped")) return;
+    s.classList.add("flipped");
+    const t=tier(r.cijfer);
+    if(t==="icon"){ s.classList.add("glow-icon"); flash(TIER_COLOR.icon); }
+    else if(t==="rare"){ s.classList.add("glow-rare"); }
+    if(++flippedCount===batch.length) done();
+  }
+  const ctl=document.getElementById("ctl");
+  const all=document.createElement("button"); all.className="ghost"; all.textContent="Alles omdraaien";
+  all.onclick=async()=>{ for(let i=0;i<slots.length;i++){ slots[i].click(); await sleep(250);} };
+  ctl.appendChild(all);
+  function done(){
+    const cb=counted(batch); const avg=cb.length?cb.reduce((s,r)=>s+r.cijfer*r.weging,0)/cb.reduce((s,r)=>s+r.weging,0):8;
+    document.getElementById("sum").innerHTML=`Pack rating: <b>${Math.round(avg*10)}</b> &nbsp;·&nbsp; gemiddeld <b>${fmtGrade(avg)}</b>`;
+    ctl.innerHTML="";
+    const b=document.createElement("button");
+    b.textContent = opened<results.length ? "Volgende pack" : "Bekijk collectie";
+    b.onclick=showPack; ctl.appendChild(b);
+  }
+  updateCount();
+}
+
+function showEnd(){
+  document.getElementById("rays").classList.add("on");
+  const cr=counted(results); const avg=cr.reduce((s,r)=>s+r.cijfer*r.weging,0)/cr.reduce((s,r)=>s+r.weging,0);
+  stage.innerHTML=`<div class="summary" style="font-size:30px;margin-bottom:20px">Jouw collectie — gemiddeld <b>${fmtGrade(avg)}</b></div><div class="grid" id="grid"></div>
+    <div class="controls"><button onclick="opened=0;showPack()">Opnieuw openen</button></div>`;
+  const grid=document.getElementById("grid");
+  [...results].sort((a,b)=>b.cijfer-a.cijfer).forEach((r,i)=>{
+    const s=document.createElement("div"); s.className="slot flipped in"; s.innerHTML=cardHTML(r); grid.appendChild(s);
+  });
+}
+
+showPack();
+</script>
+</body></html>
