@@ -156,6 +156,16 @@ const FACES = {
     eyes:`<ellipse cx="50" cy="52.5" rx="2.4" ry="2.8" fill="#2a2a2a"/><ellipse cx="70" cy="52.5" rx="2.4" ry="2.8" fill="#2a2a2a"/>`,
     mouth:`<path d="M52 68 L68 68" stroke="#8a4a3a" stroke-width="2.2" fill="none" stroke-linecap="round"/>`},
   sad: {
+    back:`<g class="dad" transform="translate(-12 4)">
+      <path d="M78 64 Q82 50 100 48 Q118 50 122 64 L122 72 L78 72 Z" fill="#3b4652"/>
+      <ellipse cx="100" cy="32" rx="15" ry="17" fill="#e8b48f"/>
+      <ellipse cx="100" cy="36" rx="12" ry="9" fill="#e0533f" opacity=".25"/>
+      <path d="M85 30 Q84 13 100 13 Q116 13 115 30 Q112 20 100 20 Q88 20 85 30 Z" fill="#4a3426"/>
+      <path d="M90 25 L97 28 M110 25 L103 28" stroke="#3a281c" stroke-width="2.6" stroke-linecap="round"/>
+      <circle cx="94" cy="31" r="1.7" fill="#222"/><circle cx="106" cy="31" r="1.7" fill="#222"/>
+      <path d="M94 42 Q100 38 106 42" stroke="#6b2f25" stroke-width="2" fill="none" stroke-linecap="round"/>
+      <path d="M113 10 l3 4 M118 12 l-4 3 M111 15 l3 -1" stroke="#e0331f" stroke-width="1.8" stroke-linecap="round"/>
+    </g>`,
     brows:`<path d="M45 46 L55 43 M65 43 L75 46" stroke="#b8925a" stroke-width="2" fill="none" stroke-linecap="round"/>`,
     eyes:`<path d="M46 52 Q50 55 54 52 M66 52 Q70 55 74 52" stroke="#2a2a2a" stroke-width="2.4" fill="none" stroke-linecap="round"/>
       <path d="M47.5 55 L46.5 70 M72.5 55 L73.5 70" stroke="#8fd6ff" stroke-width="3" stroke-linecap="round" opacity=".85"/>
@@ -164,6 +174,7 @@ const FACES = {
 };
 const mood = g => g>=7.5?"happy":g>=6?"neutral":"sad";
 const avatar = (m="happy") => { const f=FACES[m]; return `<svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+${f.back||""}
   <path d="M6 120 Q10 92 40 85 L80 85 Q110 92 114 120 Z" fill="#1e3f8f"/>
   <path d="M6 120 Q10 92 40 85 L44 85 L30 120 Z M114 120 Q110 92 80 85 L76 85 L90 120 Z" fill="#16306e"/>
   <path d="M46 85 L60 100 L74 85 Z" fill="#f6d36b"/>
