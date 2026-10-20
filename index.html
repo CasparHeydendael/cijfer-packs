@@ -118,7 +118,29 @@ button.ghost{background:transparent;color:var(--ink);box-shadow:inset 0 0 0 2px 
 button:active{transform:scale(.96)}
 .summary{font-size:22px;color:var(--muted);margin-top:18px;text-align:center;position:relative;z-index:2}
 .summary b{color:var(--gold)}
+
+/* ---------- OVERVIEW ---------- */
+.overview{position:relative;z-index:2;width:100%;max-width:560px;background:rgba(7,16,31,.82);border-radius:18px;
+  box-shadow:0 0 0 2px rgba(246,211,107,.5),0 20px 50px rgba(0,0,0,.5);padding:20px 18px;animation:pop .5s cubic-bezier(.2,1.3,.4,1)}
+.ov-hero{display:flex;align-items:center;gap:18px;padding-bottom:16px;border-bottom:1px solid rgba(255,255,255,.12)}
+.ov-hero-av{width:110px;height:110px;flex:none;border-radius:50%;overflow:hidden;background:radial-gradient(circle,#2c55b8,#0a1a46 70%);box-shadow:0 0 0 3px var(--gold)}
+.ov-hero-av svg,.ov-av svg{width:100%;height:100%;display:block}
+.ov-k{font-size:16px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+.ov-big{font-size:64px;font-weight:800;line-height:1;font-variant-numeric:tabular-nums}
+.ov-list{list-style:none;display:flex;flex-direction:column;gap:10px;margin-top:14px}
+.ov-row{display:flex;align-items:center;gap:12px}
+.ov-av{width:52px;height:52px;flex:none;border-radius:50%;overflow:hidden;background:radial-gradient(circle,#2c55b8,#0a1a46 70%)}
+.ov-main{flex:1;min-width:0}
+.ov-name{font-size:20px;font-weight:700;display:flex;justify-content:space-between;gap:8px}
+.ov-name span{font-size:15px;color:var(--muted);font-weight:500}
+.ov-bar{position:relative;height:8px;border-radius:4px;background:rgba(255,255,255,.1);margin-top:5px}
+.ov-bar i{position:absolute;inset:0 auto 0 0;border-radius:4px}
+.ov-bar b{position:absolute;left:55%;top:-3px;bottom:-3px;width:2px;background:rgba(255,255,255,.5)}
+.ov-grade{width:58px;text-align:right;font-size:30px;font-weight:800;font-variant-numeric:tabular-nums}
+.m-happy{color:var(--gold)} .m-neutral{color:#dfe5ee} .m-sad{color:#ff7a6b}
+.ov-bar i.m-happy{background:var(--gold)} .ov-bar i.m-neutral{background:#b6bec9} .ov-bar i.m-sad{background:#ff7a6b}
 @media (max-width:480px){
+  .ov-hero-av{width:84px;height:84px}.ov-big{font-size:50px}.ov-grade{font-size:24px;width:48px}
   .slot{width:150px;height:214px}
   .front{padding:16px 11px 20px}
   .rating .r{font-size:34px}.rating .pos{font-size:14px}.avatar svg{width:76px;height:76px}
@@ -329,13 +351,41 @@ async function revealCards(batch){
   updateCount();
 }
 
+const VAKNAAM = {NE:"Nederlands",EN:"Engels",WI:"Wiskunde",DU:"Duits",FA:"Frans",BI:"Biologie",GS:"Geschiedenis",AK:"Aardrijkskunde",NASK:"NaSk",NA:"Natuurkunde",SK:"Scheikunde",LO:"Gym",MU:"Muziek",BV:"Beeldende vorming",TE:"Techniek",LA:"Latijn",GR:"Grieks",IN:"Informatica",EC:"Economie",MAW:"Maatschappijleer",DR:"Drama",CKV:"CKV",FI:"Filosofie",LV:"Levensbeschouwing"};
+const wavg = rs => rs.reduce((s,r)=>s+r.cijfer*r.weging,0)/rs.reduce((s,r)=>s+r.weging,0);
+
+function overviewHTML(){
+  const cr=counted(results); const avg=wavg(cr);
+  const vakken=[...new Set(results.map(r=>r.vak))].map(v=>{
+    const all=results.filter(r=>r.vak===v), c=counted(all);
+    return {v, n:all.length, avg:c.length?wavg(c):null, label:c.length?null:all.map(r=>r.tekst).join(" "), g:c.length?wavg(c):all[0].cijfer};
+  }).sort((a,b)=>b.g-a.g);
+  const rows=vakken.map(x=>`
+    <li class="ov-row">
+      <div class="ov-av">${avatar(mood(x.g))}</div>
+      <div class="ov-main">
+        <div class="ov-name">${EMOJI[x.v]||"📚"} ${VAKNAAM[x.v]||x.v}<span>${x.n} toets${x.n===1?"":"en"}</span></div>
+        <div class="ov-bar"><i class="m-${mood(x.g)}" style="width:${x.g*10}%"></i><b></b></div>
+      </div>
+      <div class="ov-grade m-${mood(x.g)}">${x.avg!==null?fmtGrade(x.avg):x.label}</div>
+    </li>`).join("");
+  return `<section class="overview">
+    <div class="ov-hero">
+      <div class="ov-hero-av">${avatar(mood(avg))}</div>
+      <div><div class="ov-k">Totaal gemiddelde</div><div class="ov-big m-${mood(avg)}">${fmtGrade(avg)}</div><div class="ov-k">${cr.length} cijfers · gewogen</div></div>
+    </div>
+    <ul class="ov-list">${rows}</ul>
+  </section>`;
+}
+
 function showEnd(){
   document.getElementById("rays").classList.add("on");
-  const cr=counted(results); const avg=cr.reduce((s,r)=>s+r.cijfer*r.weging,0)/cr.reduce((s,r)=>s+r.weging,0);
-  stage.innerHTML=`<div class="summary" style="font-size:30px;margin-bottom:20px">Jouw collectie — gemiddeld <b>${fmtGrade(avg)}</b></div><div class="grid" id="grid"></div>
+  updateCount();
+  stage.innerHTML=`${overviewHTML()}
+    <div class="summary" style="font-size:26px;margin:28px 0 16px">Jouw collectie</div><div class="grid" id="grid"></div>
     <div class="controls"><button onclick="opened=0;showPack()">Opnieuw openen</button></div>`;
   const grid=document.getElementById("grid");
-  [...results].sort((a,b)=>b.cijfer-a.cijfer).forEach((r,i)=>{
+  [...results].sort((a,b)=>b.cijfer-a.cijfer).forEach(r=>{
     const s=document.createElement("div"); s.className="slot flipped in"; s.innerHTML=cardHTML(r); grid.appendChild(s);
   });
 }
